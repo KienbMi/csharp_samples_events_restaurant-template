@@ -14,6 +14,7 @@ namespace Restaurant.Core
         private List<Task> _taskList;
         private Dictionary<string, Article> _articleList;
         private Dictionary<string, Guest> _guestList;
+        private event EventHandler<string> TaskDone;
 
 
         public Waiter(EventHandler<string> OnTaskReady)
@@ -23,6 +24,8 @@ namespace Restaurant.Core
             _guestList = new Dictionary<string, Guest>();
             ReadArticleFromFile();
             ReadTasksFromFile();
+            FastClock.Instance.OneMinuteIsOver += OnOneMinuteIsOver;
+            TaskDone += OnTaskReady;
         }
 
 
@@ -137,7 +140,7 @@ namespace Restaurant.Core
                             {
                                 DateTime taskTime = FastClock.Instance.Time.AddMinutes(delay);
                                 guest.AddArticle(article);
-                                Task taskOrder = new Task(orderType, guest, taskTime);
+                                Task taskOrder = new Task(orderType, guest, taskTime, article);
                                 _taskList.Add(taskOrder);
 
                                 taskTime = taskTime.AddMinutes(article.TimeToBuild);
@@ -156,10 +159,39 @@ namespace Restaurant.Core
                 }
                 ignoreFirstLine = false;
             }
+        }
 
 
+        private void OnOneMinuteIsOver(object source, DateTime time)
+        {
+            if (_taskList.Count > 0)
+            {
+                Task task = _taskList[0];
+                _taskList.RemoveAt(0);
 
+                string text = "Ausgabe";
 
+                if (task.TaskType == OrderType.Order)
+                {
+                    
+                    text = $"order";
+                }
+                else if (task.TaskType == OrderType.Ready)
+                {
+                    text = $"ready";
+                }
+                else if (task.TaskType == OrderType.ToPay)
+                {
+                    text = $"toPay";
+                }
+
+                OnTaskDone(text);
+            }
+        }
+
+        private void OnTaskDone(string text)
+        {
+            TaskDone?.Invoke(this, text);
         }
     }
 }
