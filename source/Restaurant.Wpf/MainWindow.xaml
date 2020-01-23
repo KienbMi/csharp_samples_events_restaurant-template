@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         WindowStyle="ThreeDBorderWindow" BorderThickness="2" 
         BorderBrush="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"
-        Title="MainWindow" Height="350" Width="525" Initialized="MetroWindow_Initialized">
+        Title="MainWindow" Height="350" Width="525" Loaded="MetroWindow_Loaded">
     <Grid>
         <ScrollViewer >
             <TextBlock x:Name="TextBlockLog" TextWrapping="Wrap" />

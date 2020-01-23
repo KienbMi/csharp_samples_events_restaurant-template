@@ -54,8 +54,11 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Article.cs" />
+    <Compile Include="Guest.cs" />
     <Compile Include="MyFile.cs" />
     <Compile Include="OrderType.cs" />
+    <Compile Include="Task.cs" />
     <Compile Include="Waiter.cs" />
     <Compile Include="FastClock.cs" />
   </ItemGroup>
