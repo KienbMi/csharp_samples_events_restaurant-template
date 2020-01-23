@@ -39,7 +39,7 @@ namespace Restaurant.Core
                 throw new InvalidOperationException($"File {fileName} does not exist");
             }
 
-            string[] lines = File.ReadAllLines(fullFileName);
+            string[] lines = File.ReadAllLines(fullFileName, Encoding.UTF8);
 
             if (lines == null)
             {
@@ -94,7 +94,7 @@ namespace Restaurant.Core
                 throw new InvalidOperationException($"File {fileName} does not exist");
             }
 
-            string[] lines = File.ReadAllLines(fullFileName);
+            string[] lines = File.ReadAllLines(fullFileName, Encoding.UTF8);
 
             if (lines == null)
             {
@@ -144,7 +144,7 @@ namespace Restaurant.Core
                                 _taskList.Add(taskOrder);
 
                                 taskTime = taskTime.AddMinutes(article.TimeToBuild);
-                                Task taskReady = new Task(OrderType.Ready, guest, taskTime);
+                                Task taskReady = new Task(OrderType.Ready, guest, taskTime, article);
                                 _taskList.Add(taskReady);
                             }
 
@@ -159,12 +159,14 @@ namespace Restaurant.Core
                 }
                 ignoreFirstLine = false;
             }
+            _taskList.Sort();
         }
 
 
         private void OnOneMinuteIsOver(object source, DateTime time)
         {
-            if (_taskList.Count > 0)
+            while (_taskList.Count > 0 && 
+                    _taskList[0].TaskTime == FastClock.Instance.Time)
             {
                 Task task = _taskList[0];
                 _taskList.RemoveAt(0);
@@ -174,15 +176,15 @@ namespace Restaurant.Core
                 if (task.TaskType == OrderType.Order)
                 {
                     
-                    text = $"order";
+                    text = $"{task.Article.Name} für {task.Guest.Name} ist bestellt";
                 }
                 else if (task.TaskType == OrderType.Ready)
                 {
-                    text = $"ready";
+                    text = $"{task.Article.Name} für {task.Guest.Name} wird serviert";
                 }
                 else if (task.TaskType == OrderType.ToPay)
                 {
-                    text = $"toPay";
+                    text = $"{task.Guest.Name} bezahlt {task.Guest.GetBill() :f2}";
                 }
 
                 OnTaskDone(text);

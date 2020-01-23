@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Restaurant.Core
 {
-    public class Task
+    public class Task : IComparable<Task>
     {
         private OrderType _orderType;
         private Guest _guest;
@@ -26,5 +26,11 @@ namespace Restaurant.Core
 
         public Article Article => _article;
 
+        public DateTime TaskTime => _taskTime;
+
+        public int CompareTo(Task other)
+        {
+            return _taskTime.CompareTo(other._taskTime);
+        }
     }
 }
