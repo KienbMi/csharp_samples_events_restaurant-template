@@ -39,7 +39,7 @@ namespace Restaurant.Core
                 throw new InvalidOperationException($"File {fileName} does not exist");
             }
 
-            string[] lines = File.ReadAllLines(fullFileName, Encoding.UTF8);
+            string[] lines = File.ReadAllLines(fullFileName, Encoding.Default);
 
             if (lines == null)
             {
@@ -94,7 +94,7 @@ namespace Restaurant.Core
                 throw new InvalidOperationException($"File {fileName} does not exist");
             }
 
-            string[] lines = File.ReadAllLines(fullFileName, Encoding.UTF8);
+            string[] lines = File.ReadAllLines(fullFileName, Encoding.Default);
 
             if (lines == null)
             {
