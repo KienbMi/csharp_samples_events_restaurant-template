@@ -32,25 +32,13 @@ namespace Restaurant.Core
         public void ReadArticleFromFile()
         {
             string fileName = "Articles.csv";
+            string[] lines = ReadFromFile(fileName);
             string fullFileName = Utils.MyFile.GetFullNameInApplicationTree(fileName);
-
-            if (File.Exists(fullFileName) == false)
-            {
-                throw new InvalidOperationException($"File {fileName} does not exist");
-            }
-
-            string[] lines = File.ReadAllLines(fullFileName, Encoding.Default);
-
-            if (lines == null)
-            {
-                throw new InvalidOperationException($"File {fileName} is empty");
-            }
 
             bool ignoreFirstLine = true;
 
             foreach (string line in lines)
             {
-
                 if (ignoreFirstLine == false)
                 {
                     //Article; Price; TimeToBuild
@@ -87,25 +75,12 @@ namespace Restaurant.Core
         public void ReadTasksFromFile()
         {
             string fileName = "Tasks.csv";
-            string fullFileName = Utils.MyFile.GetFullNameInApplicationTree(fileName);
-
-            if (File.Exists(fullFileName) == false)
-            {
-                throw new InvalidOperationException($"File {fileName} does not exist");
-            }
-
-            string[] lines = File.ReadAllLines(fullFileName, Encoding.Default);
-
-            if (lines == null)
-            {
-                throw new InvalidOperationException($"File {fileName} is empty");
-            }
+            string[] lines = ReadFromFile(fileName);
 
             bool ignoreFirstLine = true;
 
             foreach (string line in lines)
             {
-
                 if (ignoreFirstLine == false)
                 {
                     //Delay; Name; OrderType; Article
@@ -171,11 +146,10 @@ namespace Restaurant.Core
                 Task task = _taskList[0];
                 _taskList.RemoveAt(0);
 
-                string text = "Ausgabe";
+                string text = "Task ungültig";
 
                 if (task.TaskType == OrderType.Order)
                 {
-                    
                     text = $"{task.Article.Name} für {task.Guest.Name} ist bestellt";
                 }
                 else if (task.TaskType == OrderType.Ready)
@@ -191,9 +165,32 @@ namespace Restaurant.Core
             }
         }
 
-        private void OnTaskDone(string text)
+        protected virtual void OnTaskDone(string text)
         {
             TaskDone?.Invoke(this, text);
         }
+
+
+        private string[] ReadFromFile(string fileName)
+        {
+            string[] lines;
+
+            string fullFileName = Utils.MyFile.GetFullNameInApplicationTree(fileName);
+
+            if (File.Exists(fullFileName) == false)
+            {
+                throw new InvalidOperationException($"File {fileName} does not exist");
+            }
+
+            lines = File.ReadAllLines(fullFileName, Encoding.Default);
+
+            if (lines == null)
+            {
+                throw new InvalidOperationException($"File {fileName} is empty");
+            }
+
+            return lines;
+        }
+
     }
 }
